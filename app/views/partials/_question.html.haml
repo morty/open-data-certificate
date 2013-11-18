@@ -17,12 +17,12 @@
       %small= q.help_text
 
 - else
-  %li.container
+  %div.question.container
     - r = response_for(@response_set, q, nil, rg)
     - a = @response_set.autocomplete_override_message_for(q)
 
-    - explanation_required = r.autocompletable? && !r.all_autocompleted
-    - explanation_missing = explanation_required && (a.message || '').strip.blank?
+    - explanation_required = (r.autocompletable? && !r.all_autocompleted) || r.error
+    - explanation_missing = explanation_required && !a.message?
 
     - state = 'ok' unless r.new_record?
     - state = 'warning' if r.error || r.any_metadata_missing || explanation_missing
@@ -43,7 +43,8 @@
 
     - data = {}
     - data['reference-identifier'] = rg ? "#{q.reference_identifier}_#{rg}" : q.reference_identifier
-    - data['autocompleted-value'] = r.auto_value.kind_of?(Array) ? r.auto_value.try(:join, ',') : r.auto_value if r.auto_value
+    - data['autocompletable'] = r.autocompletable?
+    - data['autocompleted-value'] = r.formatted_auto_value
     - data['metadata-field'] = true if q.metadata_field?
 
     - id = rg ? "q_#{q.id}_#{rg}" : "q_#{q.id}"
@@ -69,8 +70,7 @@
             = ff.input :api_id, :as => :quiet
             = ff.input :autocompleted, :as => :quiet
             = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id, {'data-reference-identifier' => "#{q.reference_identifier}_#{a.reference_identifier}"}]}, :include_blank => (renderer != :slider), :label => q.text, :input_html => { :disabled => disabled }, :status_message => { :message => status_message }
-        - else # :default, :inline, :inline_default
-
+        - else # :default, :inline, :inline_default, :repeater_default
           - if q.pick == "one"
             = f.semantic_fields_for i, r do |ff|
               = ff.input :question_id, :as => :quiet
@@ -94,17 +94,18 @@
 
           - else
             - q.answers.each do |a|
-              = render a.custom_renderer || '/partials/answer', q: q, a: a, f: f, rg: rg, g: g, disableFlag: disabled, question_text: question_text, status_message: status_message
+              = render a.custom_renderer || '/partials/answer', q: q, a: a, f: f, rg: rg, g: g, disableFlag: disabled, question_text: question_text, status_message: status_message, repeated_template: repeated_template
 
         .autocomplete-override{class: explanation_required ? '' : 'none'}
           - i = (i.to_i + 1).to_s if q.pick == 'any'
           - i = (i.to_i + q.answers.length).to_s if q.pick != 'one' && q.pick != 'any'
           = f.semantic_fields_for i, a, index: 'autocomplete_override_message' do |ff|
-            = ff.input :message, as: :additional_text, label: t('surveyor.autocomplete_explanation.title'), subtitle: t('surveyor.autocomplete_explanation.subtitle')
+            = ff.input :message, as: :additional_text, label: t('surveyor.override_explanation_title'), subtitle: t('surveyor.autocomplete_explanation')
 
-      - unless (q.help_text.blank?)
-        %aside.span4.question-meta{"data-meta-for"=> rg ? "#{q.reference_identifier}_#{rg}" : q.reference_identifier}
+      %aside.span4.question-meta{"data-meta-for"=> rg ? "#{q.reference_identifier}_#{rg}" : q.reference_identifier}
+        - unless (q.help_text.blank?)
           %p
             != q.help_text_for(@render_context, I18n.locale)
             - if (q.help_text_more_url)
               %a{:href => q.help_text_more_url} Read more...
+        = comment_link "/surveys/questions/#{rg || q.reference_identifier}", t('surveyor.question_comment'), q.text, q.reference_identifier

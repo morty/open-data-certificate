@@ -16,6 +16,7 @@ en:
     feedback:       Feedback
     privacy:        Privacy policy
     about:          About
+    discussion:     Discussion
     get_in_touch:   Get in touch
     terms:          Terms of use
     odi_name:       Open Data Institute
@@ -109,6 +110,12 @@ en:
       published: Published
       archived: Archived
 
+  # main controller
+  main:
+    comment:
+      discussion: Discussion
+      markdown_help: Markdown Help
+
   homepage:
     log_in: Sign in
     dont_have_an_account: Don't have an account?
@@ -162,9 +169,21 @@ en:
       search_label: Search certificates
       submit_search: Go
 
+    community_verification_panel:
+      title: Community Verification
+      description: Other people can verify whether the answers on this certificate are correct.
+      status: This certificate is **%{certification}**.
+      status_self_certified: If two or more people verify it, this certificate will become community certified.
+      verify_certificate: Verify Certificate
+      verified: verified
+      undo: undo
+      sign_in: Sign in
+      sign_in_text: to verify this certificate
+      certifiers: "This certificate has been verified by **%{count}**:"
+      person: person
+
   certificate:
     on_date: "on %{date}"
-    self_certified: self certified
     this_data_has_achieved: This data has achieved
     which_means: which means
     embeddable_certificate: Embed on your site
@@ -175,6 +194,9 @@ en:
     view_embed_page: Certificate
     edit_questionnaire: Edit questionnaire
     open_data_certificate_for: Open Data Certificate for
+    certification_types:
+      self: self certified
+      community: community certified
 
   datasets:
     datasets: Datasets
@@ -257,3 +279,28 @@ en:
         title: Expert requirements
         subtitle: You go above and beyond what’s expected - a fine example of information infrastructure for everyone else to aspire to.
         instruction: "To reach Expert level you should:"
+  transfers:
+    transfer: # The transfer dataset modal
+      title: Pass to colleague
+      body: You can hand over this questionnaire to a colleague to complete.
+      input_prompt: "Pass to colleague:"
+      input_placeholder: email address
+      submit: Send invite
+      help_text: "Note: only one person can edit a questionnaire at a time."
+      transferring: handing over to %{email}
+      cancel_transfer: '[cancel]'
+    claim:
+      title: Questionnaire hand over
+      body: 'You have been asked to take over editing the questionnaire for "%{dataset_title}".'
+      accept: Accept Hand Over
+    flashes:
+      created: Transfer created
+      unable_to_create: 'Unable to create transfer: %{errors}'
+      complete: Transfer completed
+      access_denied: Access Denied
+      access_denied_email: Access Denied - you are not logged in with the email this transfer was sent to
+      access_denied_token: 'Access Denied - token did not match, please ensure you copied from email in full'
+  transfer_mailer:
+    notify:
+      subject: Questionnaire hand over
+      message: You have been asked to take over editing an Open Data Certificate questionnaire. Please visit %{url} to accept the hand over.

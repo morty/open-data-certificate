@@ -38,7 +38,8 @@
 @odiBlue: #00b7ff;
 /* odiBlueLight - primarily for background of inputs in modals */
 @odiBlueLight: lighten(@odiBlue, 15%);
-@odiBlueLighter: lighten(@odiBlue, 36%);
+@odiBlueLighter: #DFF4FC;
+@odiBlueLightest: lighten(@odiBlue, 44%);
 @odiBlueTint: #e7f7fc;
 @odiBlueDark: darken(@odiBlue, 5%);
 @odiBlueDarker: darken(@odiBlue, 20%);
@@ -97,6 +98,8 @@
 
   -webkit-font-smoothing:antialiased;
 
+  font-weight:normal;
+
   &.embed-code {
 
     .btn-info {
@@ -138,8 +141,11 @@
   }
 
   background: @odiBlue;
-  width: 788px;
-  margin-left: -394px;
+
+  &.modal-wide{
+    width: 788px;
+    margin-left: -394px;
+  }
   .border-radius(0);
 
   h1 {
@@ -169,6 +175,16 @@
     }
   }
 
+  form.form-transfer{
+    label, .help-inline {
+      font-size:1em;
+      color:#fff;
+    }
+    label div{
+      margin-top:.5em;
+    }
+  }
+
 }
 
 .modal-header {
@@ -194,6 +210,12 @@
   padding-bottom: 40px;
   padding-top: 30px;
 
+}
+
+.modal-footer {
+  background: lighten(@odiBlue, 10%);
+  border-top: none;
+  .box-shadow(none);
 }
 
 .modal-body {
@@ -324,7 +346,6 @@
 .field_with_errors {
   .control-group.error();
 }
-
 
 /************************************************
     Typeahead --> Bootstrap
@@ -499,6 +520,15 @@ input, textarea{
   background: @odiRedDark;
 }
 
+.btn-danger {
+  background: @odiPomegranate;
+}
+
+.btn-danger:active, .btn-danger:hover, .btn-danger:focus {
+  background: @odiPomegranateDark;
+}
+
+
 .btn-large {
   font-size: 18px;
   padding: 10px 20px;
@@ -669,6 +699,10 @@ header.affix {
 
 h3 {
   font-size: 19px;
+}
+.well h3{
+  font-size: 18px;
+  line-height: 25px;
 }
 
 h4 {
@@ -920,6 +954,27 @@ header {
     min-height: 60px;
   }
 
+  &.notice {
+    text-align: center;
+
+    h1 {
+      text-transform: uppercase;
+      margin-bottom: 0px;
+    }
+
+    p {
+      margin-bottom: 18px;
+    }
+
+    &.notice-error {
+      background-color: @odiCrimson;
+    }
+
+    &.notice-warning {
+      background-color: @odiOrange;
+    }
+  }
+
   h1,h2,h3,h4,h5,h6{
     font-weight:normal;
   }
@@ -988,6 +1043,10 @@ header {
 
   p.license { margin-top: 30px; }
 
+  p.rss {
+    font-size: 14px;
+    margin-top: 13px;
+  }
 }
 
 section {
@@ -1076,7 +1135,7 @@ section {
   }
 }
 
-.alert-alert {
+.alert-alert, .alert-error {
   background: @odiCrimson;
   border: 1px solid @odiCrimsonDark;
 }
@@ -1317,12 +1376,14 @@ td.action {
   }
 }
 
-
 */
 
 // UPDATED My Certificates (/Dashboard) view (remove above when ready)
 
 
+a.transfer {
+  font-size: 0.8em;
+}
 
 .response-set{
   background-color: #f4f4f4;
@@ -1363,8 +1424,6 @@ td.action {
     }
   }
 
-
-
   a .delete {
     background-image:url(/assets/status/remove-sign.png);
     background-repeat: no-repeat;
@@ -1388,8 +1447,15 @@ td.action {
 
 .response-set.response-set-primary .row-fluid.baseline {
     background-color: rgb(222, 222, 222);
-  }
+}
 
+.response-set .row-fluid.baseline {
+
+    // Even out the spacing around the last line of data in each certificate
+    // panel on the "My Certificates" page
+    padding-bottom: 5px;
+
+}
 
 // don't display the headers, links or actions in secondary ones
 .response-set-secondary{
@@ -1598,7 +1664,7 @@ td.action {
 // Questionnaire (survey) view //
 
 // jurisdiction select at the top of the certificate
-header .jurisdiction{  
+header .jurisdiction{
   font-size: 14px;
   a {
     cursor: pointer;
@@ -1665,8 +1731,10 @@ header .jurisdiction{
     }
 
     &.input {
-      padding: 1px 1px 1px 12px;
+      padding: 1px 12px;
       margin-bottom: 5px;
+      float: left;
+      clear: left;
 
       &.quiet {
         margin: 0;
@@ -1676,7 +1744,7 @@ header .jurisdiction{
       &.warning {
         background: @odiOrangeLight;
         border: 1px solid @odiOrange;
-        padding: 0 0 0 11px;
+        padding: 0 11px;
       }
     }
   }
@@ -1770,12 +1838,6 @@ header .jurisdiction{
     }
   }
 
-  fieldset.requirement_basic li {
-    background: @odiRed;
-    color: white;
-    padding: 20px 20px 10px;
-  }
-
   fieldset.requirement_pilot,
   fieldset.requirement_standard,
   fieldset.requirement_exemplar {
@@ -1786,6 +1848,28 @@ header .jurisdiction{
       position: absolute;
       left: -70px;
       top: 10px;
+    }
+  }
+
+  #legal-section {
+    fieldset.requirement_pilot {
+      display: block;
+
+      .status-error {
+        .status-icon {
+          background: @odiOrange;
+        }
+
+        .status-message {
+          span {
+            background: @odiOrange;
+          }
+
+          i.arrow {
+            border-right-color: @odiOrange;
+          }
+        }
+      }
     }
   }
 
@@ -1841,7 +1925,19 @@ header .jurisdiction{
       }
 
       &.choice-buttons {
+        .clearfix;
         padding-bottom: 15px;
+      }
+
+      .remove_row {
+        position: absolute;
+        bottom: 30px;
+        right: 74px;
+        -webkit-font-smoothing: antialiased;
+
+        .icon {
+          margin-right: 4px;
+        }
       }
     }
 
@@ -1914,8 +2010,12 @@ header .jurisdiction{
       }
     }
 
-    .highlight_mandatory&.mandatory.no-response{
+    .highlight_mandatory&.mandatory.no-response {
       background: @odiCrimsonLight;
+
+      aside {
+        background: @odiCrimsonLight;
+      }
 
       input.string {
         padding-right: 70px;
@@ -2136,6 +2236,9 @@ header .jurisdiction{
   }
 
   .autocomplete-override {
+
+    clear:both;
+
     &.none {
       display: none;
     }
@@ -2184,7 +2287,7 @@ header .jurisdiction{
 
   &.affix, &.affix-bottom{
     position: fixed;
-    top:130px;
+    top: 105px;
   }
 
   #panel_handle{
@@ -2265,10 +2368,78 @@ header .jurisdiction{
 
       .cropped {
         display: inline-block;
-        max-width: 100%;
+        max-width: 90%;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        vertical-align: middle;
+      }
+    }
+
+    .icon-variable {
+      display: none;
+      padding-right: 2px;
+      vertical-align: middle;
+    }
+
+    .error {
+      font-size: 16px;
+      line-height: 20px;
+      max-height: none;
+
+      a {
+        text-decoration: underline;
+
+        .icon-variable {
+          vertical-align: baseline;
+          display: inline;
+        }
+      }
+    }
+
+    .well {
+      display: none;
+      padding: 6px 9px;
+      margin-right: 10px;
+
+      h5 {
+        margin: 0 0 7px;
+      }
+
+      p {
+        margin-right: 0;
+        color: @odiGreyDark;
+        max-height: none;
+        line-height: 20px;
+        font-size: 15px;
+      }
+    }
+
+    &.warning {
+      .answer {
+        .icon-variable {
+          display: inline-block;
+          &:before { content: @warning-sign; }
+          color: @odiOrange;
+        }
+      }
+
+      .error {
+        color: @odiOrange;
+      }
+    }
+
+    &.error {
+      .answer {
+        .icon-variable {
+          display: inline-block;
+          &:before { content: @exclamation-sign; }
+          color: @odiCrimson;
+        }
+      }
+
+      .error {
+        color: @odiCrimson;
       }
     }
   }
@@ -2556,38 +2727,36 @@ section.improvement{
 
 @media (max-width: 767px) {
 
-p.logo {
-  display: none;
-}
-
-#login, #register  {
-  width: 335px;
-}
-
-#login input[type="text"], #register input[type="text"], #login input[type="email"], #register input[type="email"], #login input[type="password"], #register input[type="password"] {
-  width: 330px;
-}
-
-#start-cert-modal{
-margin-left: 0;
-width: 100%;
-
-  h1 {
-    display: block;
-    clear: both;
-    margin-bottom: 20px;
+  p.logo {
+    display: none;
   }
-}
 
-.modal-body {
-  padding-left: 30px;
-padding-right: 20px;
-.log-in {
-background: none;
+  #login, #register  {
+    width: 335px;
   }
-}
 
+  #login input[type="text"], #register input[type="text"], #login input[type="email"], #register input[type="email"], #login input[type="password"], #register input[type="password"] {
+    width: 330px;
+  }
 
+  .modal.modal-wide{
+    margin-left: 0;
+    width: 100%;
+
+    h1 {
+      display: block;
+      clear: both;
+      margin-bottom: 20px;
+    }
+  }
+
+  .modal-body {
+    padding-left: 30px;
+    padding-right: 20px;
+    .log-in {
+      background: none;
+    }
+  }
 
 }
 
@@ -2602,36 +2771,35 @@ background: none;
 
 @media (max-width: 479px) {
 
-.odi-bleed .navbar .brand {
-padding-bottom: 18px;
-}
+  .odi-bleed .navbar .brand {
+    padding-bottom: 18px;
+  }
 
-.navbar-inverse .navbar-inner {
-  border-bottom: 1px solid #707070;
-}
+  .navbar-inverse .navbar-inner {
+    border-bottom: 1px solid #707070;
+  }
 
-.navbar .nav.pull-right {
-  float: left;
-  display: block;
-  clear: both;
-}
+  .navbar .nav.pull-right {
+    float: left;
+    display: block;
+    clear: both;
+  }
 
+  .certificate.hero-unit .btn-info {
+    margin: -102px auto 8px;
+    background-color: #fff;
+    float: none;
+    display: block;
+    color: @odiBlue;
+  }
 
-.certificate.hero-unit .btn-info {
-  margin: -102px auto 8px;
-  background-color: #fff;
-  float: none;
-display: block;
-color: @odiBlue;
-}
+  #register {
+    left: -2px;
+  }
 
-#register {
-  left: -2px;
-}
-
-#login {
-  left: -109px;
-}
+  #login {
+    left: -109px;
+  }
 
 }
 
@@ -2641,45 +2809,37 @@ color: @odiBlue;
 // Responsive: tablet
 // --------------------------------------------------
 
-
-@media (min-width: 480px) and (max-width: 767px) {
-
-
-
-}
-
-
 @media (max-width: 979px) {
 
-
   #footer .footer-nav {
-clear: both;
-width: auto;
-margin-left: 0;
-margin-top: 30px;
+    clear: both;
+    width: auto;
+    margin-left: 0;
+    margin-top: 30px;
 
-  ul.pull-right {
-    float: left;
+    ul.pull-right {
+      float: left;
 
-    li {
-      margin-right: 20px;
-      margin-left: 0;
+      li {
+        margin-right: 20px;
+        margin-left: 0;
+      }
     }
   }
+
+  .certificate-summary {
+    padding: 0;
+  }
+
+  .certificate-data li {
+    width: 100%;
+  }
+
+  .certificate-data li .well {
+    margin-right: 0;
+  }
+
 }
-
-.certificate-summary {
-padding: 0;
-}
-
-.certificate-data li {
-  width: 100%;
-}
-
-
-}
-
-
 
 
 //
@@ -2689,15 +2849,12 @@ padding: 0;
 
 @media (min-width: 768px) and (max-width: 979px) {
 
-
-#padd {
-  .container {
+  #padd .container {
     .offset8 {
-margin-left: 416px;
-}
+      margin-left: 416px;
+    }
     .span4 {
-width: 328px;
-}
+      width: 328px;
     }
   }
 
@@ -2755,7 +2912,6 @@ width: 328px;
     }
   }
 
-
 }
 
 
@@ -2765,19 +2921,129 @@ width: 328px;
 
 .lt9 {
 
-  /* Setting line-heights in IE centres the input text.
+    /* Setting line-heights in IE centres the input text.
      Doing this in other browsers means you get a massive text cursor - not great. */
 
-  #login, #register, .modal-body .log-in .form-field {
-    input[type="text"], input[type="email"], input[type="password"] {
-      line-height: 60px;
+    #login, #register, .modal-body .log-in .form-field {
+        input[type="text"], input[type="email"], input[type="password"] {
+            line-height: 60px;
+        }
     }
-  }
 
-  .main-default input,
-  input.string {
-    line-height: 60px;
-  }
+    .main-default input,
+    input.string {
+        line-height: 60px;
+    }
+
+    // No background-size in IE so fall back to re-exported resized images
+    // Badges on "My Certificates" page, on edited copies of published certificates
+    .response-set-secondary .level-badge, .response-set-inline .level-badge {
+
+        &.level-badge-basic{
+            background-image:url(/assets/ie/badges/raw_level_badge_55x50.png);
+        }
+        &.level-badge-pilot{
+            background-image:url(/assets/ie/badges/pilot_level_badge_55x50.png);
+        }
+        &.level-badge-standard{
+            background-image:url(/assets/ie/badges/standard_level_badge_55x50.png);
+        }
+        &.level-badge-exemplar{
+            background-image:url(/assets/ie/badges/exemplar_level_badge_55x50.png);
+        }
+
+    }
+
+    // No background-size in IE so fall back to re-exported resized images
+    // Published status icons on "My Certificates" page, on edited copies of published certificates
+    .response-set-secondary .status-badge, .response-set-inline .status-badge {
+
+        &.status-badge-draft{
+            background-image:url(/assets/ie/status/draft_35x40.png);
+        }
+        &.status-badge-published{
+            background-image:url(/assets/ie/status/published_35x40.png);
+        }
+        &.status-badge-archived{
+            background-image:url(/assets/ie/status/archived_35x40.png);
+        }
+
+    }
+
+    // No background-size in IE so fall back to re-exported resized images
+    // Badges on the "Browse all certificates" page
+    .dataset .level-badge {
+
+        &.level-badge-basic{
+            background-image:url(/assets/ie/badges/raw_level_badge_40x36.png);
+        }
+        &.level-badge-pilot{
+            background-image:url(/assets/ie/badges/pilot_level_badge_40x36.png);
+        }
+        &.level-badge-standard{
+            background-image:url(/assets/ie/badges/standard_level_badge_40x36.png);
+        }
+        &.level-badge-exemplar{
+            background-image:url(/assets/ie/badges/exemplar_level_badge_40x36png);
+        }
+
+    }
+
+    // No background-size in IE so fall back to re-exported resized images
+    // Badges on "How can I improve my open data?" page
+    section.improvement {
+
+        &.improvement-pilot header .container {
+            background-image: url(/assets/ie/badges/pilot_level_badge_71x63.png);
+        }
+        &.improvement-standard header .container {
+            background-image: url(/assets/ie/badges/standard_level_badge_71x63.png);
+        }
+        &.improvement-exemplar header .container {
+            background-image: url(/assets/ie/badges/exemplar_level_badge_71x63.png);
+        }
+
+    }
+
+    // No background-size in IE so fall back to re-exported resized images
+    // Badges on About page
+    .container.about .span8 ul.kitemarks {
+
+        li.kitemark1 { background: url(/assets/ie/badges/raw_level_badge_65x58.png) no-repeat top left;}
+        li.kitemark2 { background: url(/assets/ie/badges/pilot_level_badge_65x58.png) no-repeat top left;}
+        li.kitemark3 { background: url(/assets/ie/badges/standard_level_badge_65x58.png) no-repeat top left;}
+        li.kitemark4 { background: url(/assets/ie/badges/exemplar_level_badge_65x58.png) no-repeat top left;}
+
+    }
+
+    // Fix height of button on "Browse all certificates" page
+    .input-append .add-on, .input-append .btn, .input-append .btn-group {
+
+        line-height: 20px;
+
+    }
+
+    // Stop aside blocks in Certificate edit form from overlapping the form
+    // form fields they're attached to
+    #surveyor fieldset.row aside {
+
+        width: 260px;
+
+    }
+
+    // Asides with multiple choice answers in them were too far over
+    #surveyor fieldset.row .status-wrapper aside.answer-meta {
+
+        right: -320px;
+
+    }
+
+    // Get footer links back over to the right, but displaying in a vertical list
+    .footer-nav {
+
+        width: 30%;
+
+    }
 
 }
 
@@ -2843,9 +3109,115 @@ width: 328px;
 
 p.data {
   text-align: right;
-  
+
   .badge {
     font-size: 0.9em;
     padding: 2px 9px 3px 9px;
+  }
+}
+
+
+body{
+  .juvia-comment-count-header{
+    font-size:2em;
+  }
+  .juvia-comment .juvia-metadata{
+    background:@odiBlueLighter;
+  }
+  .juvia-action input{
+    .btn;
+    .btn-primary;
+  }
+  .juvia-add-comment-form{
+    input[type=text], textarea{
+      color:#000;
+
+      &.juvia-example-text{
+        //placeholder
+        color:#8e8c8c
+      }
+    }
+  }
+  .juvia-container blockquote {
+    font-size: 16px;
+    line-height: 1.35em;
+    font-family: @sansFontFamily
+  }
+}
+
+
+.link-comment{
+  font-size:0.8em;
+  color:@odiBlue;
+  span{
+    text-decoration: underline;
+  }
+}
+
+.discussion_help p{
+  .lead;
+}
+
+.join-discussion {
+  margin-bottom:3em;
+  .no-js &{
+    display:none;
+  }
+}
+
+// block only visible to administrators
+.admin-functions {
+  .alert();
+  .alert-info();
+  color:#444;
+  text-shadow:none;
+  font-size: 1em;
+}
+
+.js .odc-popover-content{
+  display:none;
+  span{
+    display:block;
+  }
+}
+
+.js .odc-popover{
+  cursor: pointer;
+}
+.js .answer .odc-popover{
+  opacity: 0.15;
+  .transition(opacity 0.25s)
+}
+.js .answer.odc-popover-active .odc-popover{
+  opacity: 1;
+}
+
+.popover-light{
+  @popoverBackground: @odiBlueLightest;
+  @popoverArrowColor: @odiBlueLightest;
+  @popoverArrowOuterColor: @odiBlueLight;
+  @popoverArrowOuterWidth: 8px;
+  @popoverArrowWidth: 8px;
+
+  // re-apply popover styles
+  .popover;
+  .arrow {
+    border-width: @popoverArrowOuterWidth;
+    &:after {
+      border-width: @popoverArrowWidth;
+    }
+  }
+
+  border-color: @odiBlueLight;
+  padding:0em;
+
+  // color:@odiGrey;
+  font-size:0.6em;
+  line-height: 1.5em;
+
+  width:105px;
+
+  .popover-content{
+    padding:7px 8px;
   }
 }

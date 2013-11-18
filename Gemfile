@@ -36,8 +36,9 @@ group :test do
 end
 
 group :development do
-  gem 'guard'
+  gem 'guard', '~> 1.8.3'
   gem 'guard-test'
+  # gem 'spring', github: 'jonleighton/spring'
   gem 'terminal-notifier-guard'
   gem 'ruby-prof'
   gem 'rails-footnotes', '>= 3.7.9'
@@ -99,3 +100,4 @@ gem 'odlifier', :github => 'theodi/odlifier'
 gem 'rack-cors'
 gem 'alternate_rails', :github => 'theodi/alternate-rails'
 gem 'fog'
+gem 'juvia_rails', github: 'theodi/juvia_rails'

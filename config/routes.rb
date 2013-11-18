@@ -15,25 +15,33 @@ OpenDataCertificate::Application.routes.draw do
     resources :response_sets, :only => :destroy do
       post :publish, on: :member
       post :autofill, on: :member
+      post :resolve, on: :member
     end
 
   end
-  post 'surveys', :to => 'application#start_questionnaire', :as => 'non_authenticated_start_questionnaire'
-  get 'start_certificate', :to => 'application#start_questionnaire', :as => 'authenticated_start_questionnaire'
+  post 'surveys', :to => 'main#start_questionnaire', :as => 'non_authenticated_start_questionnaire'
+  get 'start_certificate', :to => 'main#start_questionnaire', :as => 'authenticated_start_questionnaire'
 
   resources :datasets do
     put 'start_questionnaire'
     get 'certificates/latest', to: 'certificates#latest', as: 'latest'
     get 'certificates/latest/:type', to: 'certificates#latest', as: 'latest'
     get :typeahead, on: :collection
+    get :admin, on: :collection
 
     resources :certificates, :only => [:show] do
        member do
          get 'improvements', to: 'certificates#improvements', as: 'improvements'
          get 'embed', to: 'certificates#embed', as: 'embed'
          get 'badge', to: 'certificates#badge', as: 'badge'
+         post 'verify'
        end
     end
+  end
+
+  resources :transfers, :only => [:create, :destroy] do
+    get :claim,  on: :member
+    put :accept, on: :member
   end
 
   # Certificate legacy redirects
@@ -65,21 +73,24 @@ OpenDataCertificate::Application.routes.draw do
   get 'about' => 'pages#show', :id => 'about'
   get 'contact' => 'pages#show', :id => 'contact'
   get 'terms' => 'pages#show', :id => 'terms'
+  get 'markdown' => 'pages#show', :id => 'markdown_help', as: :markdown_help
 
-  # Validators
-  get 'resolve' => 'validators#resolve'
-  get 'autofill' => 'validators#autofill'
+  # comment pages
+  get 'comment' => 'main#comment', as: :comment
+  get 'discussion' => 'main#discussion', as: :discussion # general/site-wide
 
-  get 'has_js' => 'application#has_js'
+  get 'has_js' => 'main#has_js'
 
   # temporary measure - until #397 is resolved
-  get 'clear_cache' => 'application#clear_cache', :via => :post
+  get 'clear_cache' => 'main#clear_cache', :via => :post
 
   # (public) stats about the application
-  get 'status' => 'application#status'
-  get 'status/response_sets' => 'application#status_response_sets'
+  get 'status.csv' => 'main#status_csv'
+  get 'status' => 'main#status'
+  get 'status/response_sets' => 'main#status_response_sets'
+  get 'status/events' => 'main#status_events'
 
-  root :to => 'application#home'
+  root :to => 'main#home'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

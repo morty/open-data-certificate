@@ -1,11 +1,10 @@
 //= require lib/d3.v3
 //= require lib/queue.v1
 //= require lib/topojson
-
 $(function(){
 
   // hide the panel when d3 is unsupported
-  if(typeof(d3) === 'undefined') return $('#international-reach').hide();
+  if(!window.enableMap) return $('#international-reach').hide();
 
   var colours = {
     alpha: "#666",
@@ -107,10 +106,12 @@ $(function(){
       };
 
       dropdown
-        .on('change', function(d){
-          setJurisdiction(this.options[this.selectedIndex].__data__);
+        .on('focus', function(){
           autoadvance = false;
           $autoadvance.fadeIn();
+        })
+        .on('change', function(d){
+          setJurisdiction(this.options[this.selectedIndex].__data__);
         })
         .selectAll('option')
         .data(countries).enter().append("option")

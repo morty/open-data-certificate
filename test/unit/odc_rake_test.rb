@@ -41,6 +41,16 @@ class OdcRakeTest < ActiveSupport::TestCase
     ENV['FILE'] = File.join 'surveys', 'odc_questionnaire.UK.rb'
 
     assert_difference 'Survey.count', 1 do
+      Rake::Task["surveyor"].reenable
+      Rake::Task["surveyor"].invoke
+    end
+  end
+
+  test "The US survey parses correctly" do
+    ENV['FILE'] = File.join 'surveys', 'odc_questionnaire.US.rb'
+
+    assert_difference 'Survey.count', 1 do
+      Rake::Task["surveyor"].reenable
       Rake::Task["surveyor"].invoke
     end
   end
@@ -62,29 +72,26 @@ class OdcRakeTest < ActiveSupport::TestCase
     # consider things cool if we got here without breaking
   end
 
-  # currently almost all the translations are invalid yaml, uncomment this test when they
-  # have been re-exported
-  #
-  # test "Survey translations are valid yaml" do
-  #   translationDir = Rails.root.join('surveys','translations')
+  test "Survey translations are valid yaml" do
+    translationDir = Rails.root.join('surveys','translations')
 
-  #   files = Dir.entries(translationDir).select { |file| file =~ /.*\.yml$/ }
+    files = Dir.entries(translationDir).select { |file| file =~ /.*\.yml$/ }
 
-  #   files.each do |file|
-  #     contents = translationDir.join(file).read
-  #     begin
-  #       YAML.load(contents)
-  #     rescue Psych::SyntaxError => e
-  #       flunk "Syntax Error in #{file} - #{e}"
-  #     end
-  #   end
-  # end
+    files.each do |file|
+      contents = translationDir.join(file).read
+      begin
+        YAML.load(contents)
+      rescue Psych::SyntaxError => e
+        flunk "Syntax Error in #{file} - #{e}"
+      end
+    end
+  end
 
 
   test "build_changed_surveys doesn't build twice" do
     ENV['DIR'] = 'test/fixtures/surveys'
   
-    assert_difference 'Survey.count', 2 do
+    assert_difference 'Survey.count', 3 do
       Rake::Task["surveyor:build_changed_surveys"].invoke
     end
 
@@ -98,10 +105,6 @@ class OdcRakeTest < ActiveSupport::TestCase
   test "build_changed_surveys can be limited" do
     ENV['DIR'] = 'test/fixtures/surveys'
     ENV['LIMIT'] = '1'
-
-    assert_difference 'Survey.count', 1 do
-      Rake::Task["surveyor:build_changed_surveys"].invoke
-    end
 
     assert_difference 'Survey.count', 1 do
       Rake::Task["surveyor:build_changed_surveys"].invoke
@@ -149,13 +152,15 @@ class OdcRakeTest < ActiveSupport::TestCase
   test "enqueue_surveys" do
     ENV['DIR'] = 'test/fixtures/surveys'
 
-    assert_difference 'Delayed::Job.count', 2 do
-      assert_difference 'Delayed::Job.where(priority:5).count', 1,  'The default survey is prioritised' do
-        Rake::Task["surveyor:enqueue_surveys"].invoke
+    assert_difference 'Delayed::Job.count', 3 do
+      assert_difference 'Delayed::Job.where(priority:1).count', 1,  'The default survey is prioritised' do
+        assert_difference 'Delayed::Job.where(priority:2).count', 1,  'The alpha survey is prioritised' do
+          Rake::Task["surveyor:enqueue_surveys"].invoke
+        end
       end
     end
 
-    assert_difference 'Survey.count', 2, "surveys were generated" do
+    assert_difference 'Survey.count', 3, "surveys were generated" do
       Delayed::Worker.new({exit_on_complete: true}).start
     end
 

@@ -5,10 +5,17 @@
 //= require underscore
 //= require_tree .
 
-$(function(){
+/* global $, skrollr, alert, Hogan */
+
+// whether or not the homepage map should be loaded
+window.enableMap = document.querySelectorAll && Modernizr.svg;
+
+$(document).ready(function($){
   //////
   // Rails support
   //
+
+  'use strict';
 
   // Display when an remote form failed
   $(document).on('ajax:error', 'form[data-remote-error-message]', function(){
@@ -17,9 +24,9 @@ $(function(){
 
     if($target.size()){
       // create a div to show the message in
-      $('<div>',{class:'alert alert-box alert-alert'})
-      .append($('<h3>',{text:message}))
-      .appendTo($target);
+      $('<div>', {'class':'alert alert-box alert-alert'})
+        .append($('<h3>',{text:message}))
+        .appendTo($target);
     } else {
       alert(message);
     }
@@ -79,12 +86,23 @@ $(function(){
     return false;
   });
 
+  // Toggles content based on a button
+  $('[data-content=toggle]').each(function() {
+    var self = $(this);
+    self.data('target', self.find(self.data('target')));
+    self.data('button', self.find(self.data('button')));
+
+    self.data('button').click(function() {
+      self.data('target').animate({opacity: 'toggle'}, 250);
+    });
+  });
+
   $('.embed-code textarea').click(function() {
     this.select();
   });
 
   // display confirmation of clicking certain buttons
-  $(document).on('click', '[data-btn-confirmable]', function(e){
+  $(document).on('click', '[data-btn-confirmable]', function(){
     var $this = $(this),
         message = $this.data('btn-confirmable');
 
@@ -109,24 +127,18 @@ $(function(){
   // - have an 'active' class added
   // - emit 'odc.focus' & 'odc.blur' events (?)
   $surveyElements.on('mouseenter', function(){
-    $(this).addClass('active').trigger('_focus');
-  }).on('mouseleave', function(){
-    $(this).removeClass('active').trigger('_blur');
+    $(this).addClass('active').data('mouseover', true).trigger('_focus');
+  }).on('mouseleave', function(){;
+    $(this).removeClass('active').data('mouseover', false).trigger('_blur');
   });
 
   // trigger the highlighting of fieldsets
   $('#surveyor')
-    .on('mousedown', 'fieldset', function(e){
-      $(this).data('keep-active', true)
-    })
-    .on('mouseup', 'fieldset', function(e){
-      $(this).data('keep-active', false)
-    })
     .on('focus', 'fieldset', function(){
       $(this).addClass('active').trigger('_focus');
     })
     .on('blur', 'fieldset', function(){
-      if (!$(this).data('keep-active')) {
+      if (!$(this).data('mouseover')) {
         $(this).removeClass('active').trigger('_blur');
       }
     });
@@ -146,19 +158,36 @@ $(function(){
 
 
   // elements that have to be shown along with the fieldsets
-  $('[data-meta-for]').each(function(){
+  $('[data-meta-for]').each(function() {
     var ref_id = $(this).data('meta-for'),
         $el = $(reference_id_els[ref_id]),
+        $row = $(this).closest('.question-row'),
         metas = $el.data('metas') || [];
+
     metas.push(this);
     $el.data('metas', metas);
+
+    if ($el.hasClass('input')) {
+      $row.data('input-metas', $row.data('input-metas') || []);
+      $row.data('input-metas').push(this);
+    }
   });
-  $surveyElements.on('_focus', function(){
+
+  $surveyElements.filter('.question-row').on('_focus', function() {
     $($(this).data('metas')).show();
   }).on('_blur', function(){
     $($(this).data('metas')).hide();
+    $($(this).data('input-metas')).hide();
+    return false;
   });
 
+  $surveyElements.filter('.input').on('_focus', function() {
+    $($(this).closest('.question-row').data('input-metas')).hide();
+    $($(this).data('metas')).show();
+    return false;
+  }).on('_blur', function(){
+    return false;
+  });
 
   // deal with accordion section changes
   $('.survey-section .collapse').on('show', function(){
@@ -358,7 +387,7 @@ $(function(){
 
   // search typeahead
   $('.typeahead-search').typeahead([{
-      name:"datasets",
+      name:'datasets',
       header: '<h3>Datasets</h3>',
       template: '<p class="attained attained-{{attained_index}}">{{value}}</p>',
       engine: Hogan,
@@ -367,27 +396,53 @@ $(function(){
       }
     },
     {
-      name:"publisher",
+      name:'publisher',
       header: '<h3>Publisher</h3>',
       remote: {
         url:'/datasets/typeahead?mode=publisher&q=%QUERY'
       }
     },
     {
-      name:"jurisdiction",
+      name:'jurisdiction',
       header: '<h3>Jurisdiction</h3>',
       remote: {
         url:'/datasets/typeahead?mode=country&q=%QUERY'
       }
     }
   ])
-  .on('typeahead:selected typeahead:autocompleted', function(e, datum, dataset){
+  .on('typeahead:selected typeahead:autocompleted', function(e, datum){
     if(datum.path){ document.location = datum.path; }
   });
 
+  // Stop the jump to the top of the page when the delete dialog is confirmed.
+  // placeholder till bluerail/twitter-bootstrap-rails-confirm#9 gets published
+  $(document).on('click', "#confirmation_dialog [href='#']", function(e){
+    e.preventDefault();
+  })
 
-  $(document).on('click', '.dataset .show-more, .dataset .hide-more', function(){
+  .on('click', '.dataset .show-more, .dataset .hide-more', function(){
     $(this).parents('.dataset').toggleClass('expanded', $(this).hasClass('show-more'));
   })
+
+  .on('click', '.join-discussion a', function(e){
+    e.preventDefault();
+    var top = $('.juvia-add-comment-form').prev().offset().top;
+    $('body').animate({scrollTop:top})
+  });
+
+  
+  $('.certificate-data').popover({
+    selector:'.odc-popover',
+    trigger:'click',
+    html:true,
+    content: function(){
+      // pull out the content from the child element (hidden with css)
+      return $('.odc-popover-content', this).html()
+    },
+    template: '<div class="popover popover-light"><div class="arrow"></div>'+
+              '<h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+  })
+  .on('mouseover', '.answer', function(){$(this).toggleClass('odc-popover-active', true)})
+  .on('mouseout',  '.answer', function(){$(this).toggleClass('odc-popover-active', false)})
 
 });

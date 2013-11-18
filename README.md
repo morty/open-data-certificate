@@ -2,7 +2,6 @@
 
 [![Build Status](http://jenkins.theodi.org/job/open-data-certificate-master/badge/icon)](http://jenkins.theodi.org/job/open-data-certificate-master/) [![Code Climate](https://codeclimate.com/repos/519228b056b10279600066b5/badges/772e6d53c060a1268449/gpa.png)](https://codeclimate.com/repos/519228b056b10279600066b5/feed) [![Dependency Status](https://gemnasium.com/theodi/open-data-certificate.png)](https://gemnasium.com/theodi/open-data-certificate)
 
-
 The original prototype has been moved to [/prototype](https://github.com/theodi/open-data-certificate/tree/master/prototype).
 
 ### Surveyor
@@ -85,7 +84,6 @@ If the question is a "normal" question (ie: not a label), the requirement attrib
 
 * `:placeholder` - placeholder text displayed in a field before anything is entered
 
-
 ### Translations
 
 Questionnaires are able to be translated and a user can select the locale when they are filling them out.
@@ -100,7 +98,6 @@ In the translation file (eg. surveys/translations/my-file.es.yml)
 * set the locale name with `es: Spanish` (where 'es' was the reference given in the survey file)
 
 There is an example of adding a translation on [this gist](https://gist.github.com/benfoxall/c35ad597fd2c2d7fcdc6#file-0002-manually-corrected-translation-yaml-patch)
-
 
 ### Running
 
@@ -128,6 +125,32 @@ rake surveyor:build_changed_surveys DIR=surveys/development
 bundle exec guard
 ```
 
+#### Environment variables
+
+Some environment variables are required for the certificates site, these can be set in a .env file in the root of the project.
+
+```
+# Rackspace credentials for saving certificate dumps
+RACKSPACE_USERNAME
+RACKSPACE_API_KEY
+RACKSPACE_CERTIFICATE_DUMP_CONTAINER
+
+# Juvia details to allow commenting
+JUVIA_BASE_URL
+CERTIFICATE_JUVIA_SITE_KEY
+
+# Sending error reports to airbrake
+AIRBRAKE_CERTIFICATE_KEY
+```
+
+#### Admin functions
+
+To mark a user as being an admin - the users ID should be included in the `ODC_ADMIN_IDS` environment variable (comma separated).  The easiest way to find the ID is to look on the URL of their account page.
+
+Admins are able to block a dataset from displaying on the public /datasets page by visiting the dataset and toggling the visibility at the top of the page.
+
+Removed datasets are listed at `/datasets/admin` (only accessible by admin users).
+
 #### Changing surveys
 
 To change surveys, you'll need Saxon installed. On a Mac, this is as simple as running:
@@ -137,7 +160,6 @@ brew install saxon
 ```
 
 You can then change the `prototype/survey.xsl` file and run:
-
 
 ```bash
 saxon -s:prototype/jurisdictions/ -xsl:prototype/surveyor.xsl -o:prototype/temp/

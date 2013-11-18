@@ -1,0 +1,10 @@
+= paginate @events
+
+%ul.unstyled
+  - @events.each do |e|
+    %li
+      %strong= e.created_at.to_s(:short) << ': '
+      = e.message
+      %hr
+
+= paginate @events
