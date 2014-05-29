@@ -23,7 +23,7 @@ module UploadUsageData
       headers = data.first.keys
       csv << headers
 
-      data.each {|c| csv << headers.map { |h| c[h] } }
+      data.each {|c| csv << headers.map { |h| c[h] } rescue nil }
     end
   end
 
