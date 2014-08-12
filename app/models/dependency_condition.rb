@@ -8,19 +8,21 @@ class DependencyCondition < ActiveRecord::Base
   #
   # in the original implementation this doesn't work because a
   # blank response is nil, rather than ""
+
+  def is_blank(responses_pre)
+    responses_pre.select {|rs| rs[:answer_id] == answer_id} .each do |response|
+      is_blank = false unless response.string_value.blank?
+    end
+
+    return is_blank || true
+  end
+
   def to_hash(response_set, responses_pre = response_set.responses.all)
 
     if ['==', '!='].include?(operator) && string_value == ""
-      is_blank = true
-
-      responses_pre.select {|rs| rs[:answer_id] == answer_id} .each do |response|
-        is_blank = false unless response.string_value.blank?
-      end
-
       flip = operator == '!='
 
-      {rule_key.to_sym => flip ^ is_blank}
-
+      {rule_key.to_sym => flip ^ is_blank(responses_pre)}
     else
 
       responses = question.blank? ? [] : responses_pre.select {|x| question.answer_ids.include? x.answer_id}
