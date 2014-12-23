@@ -54,13 +54,14 @@ group :development do
 end
 
 group :production do
-  gem 'foreman'
   gem 'mysql2'
   gem 'airbrake'
   gem 'memcache-client'
   gem 'logstash-event'
   gem 'lograge'
 end
+
+gem 'foreman', '~> 0.65'
 
 gem 'jquery-rails'
 
